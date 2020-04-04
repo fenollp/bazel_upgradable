@@ -1,0 +1,27 @@
+on: push
+name: Tests
+env:
+  BAZEL: bazelisk
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # For GitHub rules
+  BAZELISK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  test_on_ubuntu:
+    name: RUN TESTS ON ubuntu
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: ./test.sh
+
+  test_on_macos:
+    name: RUN TESTS ON macos
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: ./test.sh
+
+  test_on_windows:
+    name: RUN TESTS ON windows
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: ./test.sh

@@ -1,0 +1,14 @@
+workspace(name = "example_http_archive_resolved")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "bazel_skylib",
+    type = "tar.gz",
+    url = "https://github.com/bazelbuild/bazel-skylib/releases/download/0.8.0/bazel-skylib.0.8.0.tar.gz",
+)
+
+load("@bazel_skylib//lib:versions.bzl", "versions")
+
+# Not an actual requirement. This is only to demonstrate usage of http_archive
+versions.check(minimum_bazel_version = "0.19")
