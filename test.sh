@@ -40,9 +40,12 @@ for workspace in example_*; do
 	$BAZEL sync
 	make_resolved.bzl_hermetic
 	case "$workspace" in
+	example_http_archive_resolved) true ;;
 	*)
-		git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
+		git --no-pager diff . && diff -q $L upgraded_$L
+		git checkout -- $L
 	esac
+	git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
 
 	popd >/dev/null
 done
@@ -52,12 +55,15 @@ echo
 echo Running locked, again
 echo
 
-for workspace in example_*; do
+for workspace in example_*upgradable*; do
 	echo
 	echo "$workspace"
 	pushd "$workspace" >/dev/null
 
+	cat upgraded_$L >$L
 	$BAZEL run hello
+	git checkout -- $L
+	git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
 
 	popd >/dev/null
 done

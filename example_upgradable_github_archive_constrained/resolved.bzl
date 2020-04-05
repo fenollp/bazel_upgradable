@@ -96,20 +96,23 @@ resolved = [
         "native": "bind(name = \"has_androidsdk\", actual = \"@bazel_tools//tools/android:always_false\")"
     },
     {
-        "original_rule_class": "@bazel_upgradable//rules:github.bzl%upgradable_github_archive",
+        "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
         "original_attributes": {
             "name": "bazel_skylib",
-            "slug": "bazelbuild/bazel-skylib",
-            "tag": "~=0.8"
+            "url": "https://github.com/bazelbuild/bazel-skylib/releases/download/0.8.0/bazel-skylib.0.8.0.tar.gz",
+            "type": "tar.gz"
         },
         "repositories": [
             {
-                "rule_class": "@bazel_upgradable//rules:github.bzl%upgradable_github_archive",
+                "rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
                 "attributes": {
-                    "sha256": "13b6928ab4981d5c37e76b3035c3a2665b71811cc3d1766bdd86884f736da3f7",
+                    "url": "https://github.com/bazelbuild/bazel-skylib/releases/download/0.8.0/bazel-skylib.0.8.0.tar.gz",
+                    "urls": [],
+                    "sha256": "2ef429f5d7ce7111263289644d233707dba35e39696377ebab8b0bc701f7818e",
                     "netrc": "",
-                    "auth_patterns": {},
                     "canonical_id": "",
+                    "strip_prefix": "",
+                    "type": "tar.gz",
                     "patches": [],
                     "patch_tool": "",
                     "patch_args": [
@@ -119,12 +122,9 @@ resolved = [
                     "patch_cmds_win": [],
                     "build_file_content": "",
                     "workspace_file_content": "",
-                    "branch": "",
-                    "slug": "bazelbuild/bazel-skylib",
-                    "tag": "~=0.8",
                     "name": "bazel_skylib"
                 },
-                "output_tree_hash": "c3fb5758973210b3115b2ebf823ae25951e28ddc86d2ca1f95cd17ae7f4fd0f9"
+                "output_tree_hash": "b595c6c66f3d3a16393e1cc004fadac5d7f3c279e411c57c1a1d0cf5189cb861"
             }
         ]
     },
