@@ -1,4 +1,4 @@
-workspace(name = "example_upgradable_github_archive_HEAD")
+workspace(name = "example_upgradable_github_archive_constrained")
 
 local_repository(
     name = "bazel_upgradable",
@@ -9,8 +9,8 @@ load("@bazel_upgradable//rules:github.bzl", "upgradable_github_archive")
 
 upgradable_github_archive(
     name = "bazel_skylib",
-    branch = "master",
     slug = "bazelbuild/bazel-skylib",
+    tag = "~=0.8",
 )
 
 load("@bazel_skylib//lib:versions.bzl", "versions")

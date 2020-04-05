@@ -1,4 +1,4 @@
-load("//rules:utils.bzl", "git_refs", "sat_constraint")
+load(":utils.bzl", "sat")
 load(
     "@bazel_tools//tools/build_defs/repo:utils.bzl",
     "patch",
@@ -150,57 +150,51 @@ unless it was added to the cache by a request with the same canonical id.
 }
 
 _attrs_for_upgradable_github_archive = _ATTRS_INHERITED_FROM_HTTP_ARCHIVE
+_attrs_for_upgradable_github_archive["branch"] = attr.string(mandatory = False)
 _attrs_for_upgradable_github_archive["slug"] = attr.string(mandatory = True)
-_attrs_for_upgradable_github_archive["constraint"] = attr.string(mandatory = False)
+_attrs_for_upgradable_github_archive["tag"] = attr.string(mandatory = False)
 
 def _impl_for_upgradable_github_archive(ctx):
     """Implementation of the upgradable_github_archive rule."""
-    slug = ctx.attr.slug
-    splitted_slug = slug.split("/")
-    if len(splitted_slug) != 2:
-        fail("Bad GitHub slug: {}".format(slug))
+    if ctx.attr.build_file and ctx.attr.build_file_content:
+        fail("Only one of build_file and build_file_content can be provided.")
 
     if ctx.attr.sha256 != "":
         fail("Field sha256 is not overridable")
 
-    if ctx.attr.build_file and ctx.attr.build_file_content:
-        fail("Only one of build_file and build_file_content can be provided.")
+    if len([None for x in [ctx.attr.branch, ctx.attr.tag] if x]) != 1:
+        fail("Exactly one of branch or tag must be provided")
 
-    for attr in _attrs_for_upgradable_github_archive:
-        print(">>> attr {} = {}".format(attr, getattr(ctx.attr, attr)))
+    if "/" not in ctx.attr.slug:
+        fail("GitHub slug must be of the form owner/repo")
 
-    # if "GITHUB_TOKEN" in ctx.os.environ
+    # TODO: use "GITHUB_TOKEN" in ctx.os.environ || netrc
 
-    refs = git_refs(ctx, "git://github.com/{}.git".format(slug))
-    for ref, commit in refs.items():
-        print(">>> refs[{}] = {}".format(ref, commit))
+    remote = "git://github.com/{}.git".format(ctx.attr.slug)
+    ref, commit = sat(ctx, remote, ctx.attr.branch, ctx.attr.tag)
 
-    constraint = ctx.attr.constraint
-    if not constraint:
-        constraint = "HEAD"
-    commit, version = sat_constraint(ctx, constraint, refs)
-    print("Satisfied constraint {} on slug {}: commit = {}, version = {}".format(constraint, slug, commit, version))
+    args = ["Branch", ref, remote, ctx.attr.branch, commit]
+    if ctx.attr.tag:
+        args = ["Tag", ref, remote, ctx.attr.tag, commit]
+    print("{} {} of {} satisfies constraint {} (commit = {})".format(*args))
 
-    archive_type = "zip"
-    url = "https://github.com/{}/archive/{}.{}".format(slug, commit, archive_type)
-    strip_prefix = "{}-{}".format(splitted_slug[1], commit)
+    strip_prefix = "{}-{}".format(ctx.attr.slug.split("/")[1], commit)
+    all_urls = ["https://github.com/{}/archive/{}.zip".format(ctx.attr.slug, commit)]
 
-    all_urls = [url]
     auth = _get_auth(ctx, all_urls)
-
     download_info = ctx.download_and_extract(
         all_urls,
         "",
         ctx.attr.sha256,
-        archive_type,
+        "zip",
         strip_prefix,
         canonical_id = ctx.attr.canonical_id,
         auth = auth,
     )
     workspace_and_buildfile(ctx)
     patch(ctx)
-
-    return update_attrs(ctx.attr, _attrs_for_upgradable_github_archive.keys(), {"sha256": download_info.sha256})
+    attrs = _attrs_for_upgradable_github_archive.keys()
+    return update_attrs(ctx.attr, attrs, {"sha256": download_info.sha256})
 
 upgradable_github_archive = repository_rule(
     implementation = _impl_for_upgradable_github_archive,

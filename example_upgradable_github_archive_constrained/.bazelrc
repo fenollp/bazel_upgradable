@@ -1,0 +1,5 @@
+# From https://blog.bazel.build/2018/09/28/first-class-resolved-file.html
+sync --experimental_repository_resolved_file=resolved.bzl
+build --experimental_resolved_file_instead_of_workspace=resolved.bzl
+build --experimental_repository_hash_file=resolved.bzl
+build --experimental_verify_repository_rules=@bazel_tools//tools/build_defs/repo:git.bzl%git_repository

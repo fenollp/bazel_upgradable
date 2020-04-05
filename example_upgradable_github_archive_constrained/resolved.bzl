@@ -82,10 +82,10 @@ resolved = [
     {
         "original_rule_class": "local_repository",
         "original_attributes": {
-            "name": "example_upgradable_github_archive_HEAD",
+            "name": "example_upgradable_github_archive_constrained",
             "path": "."
         },
-        "native": "local_repository(name = \"example_upgradable_github_archive_HEAD\", path = \".\")"
+        "native": "local_repository(name = \"example_upgradable_github_archive_constrained\", path = \".\")"
     },
     {
         "original_rule_class": "bind",
@@ -99,14 +99,14 @@ resolved = [
         "original_rule_class": "@bazel_upgradable//rules:github.bzl%upgradable_github_archive",
         "original_attributes": {
             "name": "bazel_skylib",
-            "branch": "master",
-            "slug": "bazelbuild/bazel-skylib"
+            "slug": "bazelbuild/bazel-skylib",
+            "tag": "~=0.8"
         },
         "repositories": [
             {
                 "rule_class": "@bazel_upgradable//rules:github.bzl%upgradable_github_archive",
                 "attributes": {
-                    "sha256": "7ecc00aa8a58efac1a5a083ced279e2176ed1486dbfd2a07e714817656d46dca",
+                    "sha256": "13b6928ab4981d5c37e76b3035c3a2665b71811cc3d1766bdd86884f736da3f7",
                     "netrc": "",
                     "auth_patterns": {},
                     "canonical_id": "",
@@ -119,12 +119,12 @@ resolved = [
                     "patch_cmds_win": [],
                     "build_file_content": "",
                     "workspace_file_content": "",
-                    "branch": "master",
+                    "branch": "",
                     "slug": "bazelbuild/bazel-skylib",
-                    "tag": "",
+                    "tag": "~=0.8",
                     "name": "bazel_skylib"
                 },
-                "output_tree_hash": "94599200104bb5c670e33670e7e126a0133079f88d80169c9ff6df944cf192a8"
+                "output_tree_hash": "c3fb5758973210b3115b2ebf823ae25951e28ddc86d2ca1f95cd17ae7f4fd0f9"
             }
         ]
     },
