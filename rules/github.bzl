@@ -159,9 +159,6 @@ def _impl_for_upgradable_github_archive(ctx):
     if ctx.attr.build_file and ctx.attr.build_file_content:
         fail("Only one of build_file and build_file_content can be provided.")
 
-    if ctx.attr.sha256 != "":
-        fail("Field sha256 is not overridable")
-
     if len([None for x in [ctx.attr.branch, ctx.attr.tag] if x]) != 1:
         fail("Exactly one of branch or tag must be provided")
 
