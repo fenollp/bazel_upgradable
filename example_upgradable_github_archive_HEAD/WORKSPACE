@@ -1,0 +1,19 @@
+workspace(name = "example_upgradable_github_archive_HEAD")
+
+local_repository(
+    name = "bazel_upgradable",
+    path = "..",
+)
+
+load("@bazel_upgradable//rules:github.bzl", "upgradable_github_archive")
+
+upgradable_github_archive(
+    name = "bazel_skylib",
+    constraint = "HEAD",
+    slug = "bazelbuild/bazel-skylib",
+)
+
+load("@bazel_skylib//lib:versions.bzl", "versions")
+
+# Not an actual requirement. This is only to demonstrate usage of upgradable_github_archive
+versions.check(minimum_bazel_version = "0.19")

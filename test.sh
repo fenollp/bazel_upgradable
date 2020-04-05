@@ -3,6 +3,13 @@
 set -eu
 set -o pipefail
 git --no-pager diff -- example_* && [[ 0 -eq "$(git diff -- example_* | wc -l)" ]]
+L=resolved.bzl
+
+# FIXME: https://github.com/bazelbuild/bazel/issues/11067
+make_resolved.bzl_hermetic() {
+	grep -v -F '"definition_information": ' $L >$L~
+	mv $L~ $L
+}
 
 
 echo
@@ -13,7 +20,9 @@ for workspace in example_*; do
 	echo
 	echo "$workspace"
 	pushd "$workspace" >/dev/null
+
 	$BAZEL run hello
+
 	popd >/dev/null
 done
 git --no-pager diff -- example_* && [[ 0 -eq "$(git diff -- example_* | wc -l)" ]]
@@ -29,7 +38,7 @@ for workspace in example_*; do
 	pushd "$workspace" >/dev/null
 
 	$BAZEL sync
-
+	make_resolved.bzl_hermetic
 	case "$workspace" in
 	*)
 		git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
@@ -47,7 +56,9 @@ for workspace in example_*; do
 	echo
 	echo "$workspace"
 	pushd "$workspace" >/dev/null
+
 	$BAZEL run hello
+
 	popd >/dev/null
 done
 git --no-pager diff -- example_* && [[ 0 -eq "$(git diff -- example_* | wc -l)" ]]
