@@ -177,14 +177,14 @@ def _impl_for_upgradable_github_archive(ctx):
         print("{} {} of {} satisfies constraint {} (commit = {})".format(*args))
 
         strip_prefix = "{}-{}".format(ctx.attr.slug.split("/")[1], commit)
-        all_urls = ["https://github.com/{}/archive/{}.zip".format(ctx.attr.slug, commit)]
+        all_urls = ["https://github.com/{}/archive/{}.tar.gz".format(ctx.attr.slug, commit)]
 
     auth = _get_auth(ctx, all_urls)
     download_info = ctx.download_and_extract(
         all_urls,
         "",
         ctx.attr.sha256,
-        "zip",
+        "tar.gz",
         strip_prefix,
         canonical_id = ctx.attr.canonical_id,
         auth = auth,

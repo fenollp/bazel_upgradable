@@ -121,14 +121,14 @@ resolved = [
                     "branch": "master",
                     "slug": "bazelbuild/bazel-skylib",
                     "tag": "",
-                    "sha256": "7ecc00aa8a58efac1a5a083ced279e2176ed1486dbfd2a07e714817656d46dca",
+                    "sha256": "5d4949618eb80279e84b43e1232d2dfb45c77ea19541a214d4d3da0c59505f2a",
                     "strip_prefix": "bazel-skylib-9935e0f820692f5f38e3b00c64ccbbff30cebe11",
                     "urls": [
-                        "https://github.com/bazelbuild/bazel-skylib/archive/9935e0f820692f5f38e3b00c64ccbbff30cebe11.zip"
+                        "https://github.com/bazelbuild/bazel-skylib/archive/9935e0f820692f5f38e3b00c64ccbbff30cebe11.tar.gz"
                     ],
                     "name": "bazel_skylib"
                 },
-                "output_tree_hash": "94599200104bb5c670e33670e7e126a0133079f88d80169c9ff6df944cf192a8"
+                "output_tree_hash": "4e91ba5b3da67cd35302954b632739481a13fc31e064dd19a94108d5e6c4174a"
             }
         ]
     },
