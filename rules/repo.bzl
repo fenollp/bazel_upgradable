@@ -141,26 +141,50 @@ unless it was added to the cache by a request with the same canonical id.
     ),
 }
 
-_attrs_for_upgradable_github_archive = _ATTRS_INHERITED_FROM_HTTP_ARCHIVE
-_attrs_for_upgradable_github_archive["branch"] = attr.string()
-_attrs_for_upgradable_github_archive["slug"] = attr.string(mandatory = True)
-_attrs_for_upgradable_github_archive["tag"] = attr.string()
-_attrs_for_upgradable_github_archive["sha256"] = attr.string(doc = "Internal")
-_attrs_for_upgradable_github_archive["strip_prefix"] = attr.string(doc = "Internal")
-_attrs_for_upgradable_github_archive["urls"] = attr.string_list(doc = "Internal")
+_attrs_for_upgradable_repository = _ATTRS_INHERITED_FROM_HTTP_ARCHIVE
+_attrs_for_upgradable_repository["branch"] = attr.string()
+_attrs_for_upgradable_repository["remote"] = attr.string(mandatory = True)
+_attrs_for_upgradable_repository["tag"] = attr.string()
+_attrs_for_upgradable_repository["sha256"] = attr.string(doc = "Internal")
+_attrs_for_upgradable_repository["strip_prefix"] = attr.string(doc = "Internal")
+_attrs_for_upgradable_repository["urls"] = attr.string_list(doc = "Internal")
 
-def _impl_for_upgradable_github_archive(ctx):
-    """Implementation of the upgradable_github_archive rule."""
+def _prefix_for(hosting, repo, commit):
+    if hosting == "github":
+        return "{}-{}".format(repo, commit)
+    fail("PLEASE REPORT: _prefix_for({}, {}, {})".format(hosting, repo, commit))
+
+def _archive_for(hosting, host, owner, repo, commit):
+    if hosting == "github":
+        return "https://{}/{}/{}/archive/{}.tar.gz".format(host, owner, repo, commit)
+    fail("PLEASE REPORT: _archive_for({}, {}, {}, {}, {})".format(hosting, host, owner, repo, commit))
+
+def _impl_for_upgradable_repository(ctx):
+    """Implementation of the upgradable_repository rule."""
     if ctx.attr.build_file and ctx.attr.build_file_content:
         fail("Only one of build_file and build_file_content can be provided.")
 
+    if not ctx.attr.branch and not ctx.attr.tag:
+        ctx.attr["branch"] = "master"
     if len([None for x in [ctx.attr.branch, ctx.attr.tag] if x]) != 1:
         fail("Exactly one of branch or tag must be provided")
 
-    if "/" not in ctx.attr.slug:
-        fail("GitHub slug must be of the form owner/repo")
+    remote_split = ctx.attr.remote.split("/")
+    if len(remote_split) != 5:
+        fail("A remote must be of the form scheme://host/owner/repo")
+    scheme, _, host, owner, repo = remote_split
+    if scheme == "git:":
+        if repo.endswith(".git"):
+            repo = repo[:-len(".git")]
+    else:
+        fail("Unsupported scheme '{}'".format(scheme))
+    hosting = None
+    if host == "github.com":
+        hosting = "github"
+    else:
+        fail("Unsupported hosting with {}".format(host))
 
-    # TODO: use "GITHUB_TOKEN" in ctx.os.environ || netrc
+    # TODO: use "GITHUB_TOKEN" in ctx.os.environ || netrc or other auth means
 
     all_urls = None
     strip_prefix = None
@@ -168,16 +192,15 @@ def _impl_for_upgradable_github_archive(ctx):
         all_urls = ctx.attr.urls
         strip_prefix = ctx.attr.strip_prefix
     else:
-        remote = "git://github.com/{}.git".format(ctx.attr.slug)
-        ref, commit = sat(ctx, remote, ctx.attr.branch, ctx.attr.tag)
+        ref, commit = sat(ctx, ctx.attr.remote, ctx.attr.branch, ctx.attr.tag)
 
-        args = ["Branch", ref, remote, ctx.attr.branch, commit]
+        args = ["Branch", ref, ctx.attr.remote, ctx.attr.branch, commit]
         if ctx.attr.tag:
-            args = ["Tag", ref, remote, ctx.attr.tag, commit]
+            args = ["Tag", ref, ctx.attr.remote, ctx.attr.tag, commit]
         print("{} {} of {} satisfies constraint {} (commit = {})".format(*args))
 
-        strip_prefix = "{}-{}".format(ctx.attr.slug.split("/")[1], commit)
-        all_urls = ["https://github.com/{}/archive/{}.tar.gz".format(ctx.attr.slug, commit)]
+        all_urls = [_archive_for(hosting, host, owner, repo, commit)]
+        strip_prefix = _prefix_for(hosting, repo, commit)
 
     auth = _get_auth(ctx, all_urls)
     download_info = ctx.download_and_extract(
@@ -191,14 +214,14 @@ def _impl_for_upgradable_github_archive(ctx):
     )
     workspace_and_buildfile(ctx)
     patch(ctx)
-    attrs = _attrs_for_upgradable_github_archive.keys()
+    attrs = _attrs_for_upgradable_repository.keys()
     return update_attrs(ctx.attr, attrs, {
         "sha256": download_info.sha256,
         "strip_prefix": strip_prefix,
         "urls": all_urls,
     })
 
-upgradable_github_archive = repository_rule(
-    implementation = _impl_for_upgradable_github_archive,
-    attrs = _attrs_for_upgradable_github_archive,
+upgradable_repository = repository_rule(
+    implementation = _impl_for_upgradable_repository,
+    attrs = _attrs_for_upgradable_repository,
 )

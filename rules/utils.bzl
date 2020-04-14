@@ -8,8 +8,10 @@ def _git_ls_remote(ctx, remote):
         if
         # Remove dereferenced tags
         line.rfind("^{}") == -1 and
-        # Remove pull requests
-        line.rfind("refs/pull/") == -1
+        # Remove GitHub's pull requests
+        line.find("refs/pull/") == -1 and
+        # Remove Gitlab's merge requests
+        line.find("refs/merge-requests/") == -1
     ]
 
 def _ref_uri(ref_kind, ref = ""):
@@ -36,6 +38,7 @@ def _refs_matching(lines, pattern):
     return refs
 
 def _sat_semver_constraint(ctx, remote, ref_kind, constraint, refs):
+    # TODO: migrate to Starlark to drop Python dependency
     script = ctx.path("../bazel_upgradable/rules/sat_semver.py")
     args = ["python", script, constraint]
     args.extend(refs.keys())
