@@ -82,10 +82,10 @@ resolved = [
     {
         "original_rule_class": "local_repository",
         "original_attributes": {
-            "name": "example_upgradable_github_archive_constrained",
+            "name": "example_upgradable_gitlab_archive_constrained",
             "path": "."
         },
-        "native": "local_repository(name = \"example_upgradable_github_archive_constrained\", path = \".\")"
+        "native": "local_repository(name = \"example_upgradable_gitlab_archive_constrained\", path = \".\")"
     },
     {
         "original_rule_class": "bind",
@@ -96,45 +96,8 @@ resolved = [
         "native": "bind(name = \"has_androidsdk\", actual = \"@bazel_tools//tools/android:always_false\")"
     },
     {
-        "original_rule_class": "@bazel_upgradable//rules:repo.bzl%upgradable_repository",
-        "original_attributes": {
-            "name": "bazel_skylib",
-            "remote": "git://github.com/bazelbuild/bazel-skylib.git",
-            "tag": "~1"
-        },
-        "repositories": [
-            {
-                "rule_class": "@bazel_upgradable//rules:repo.bzl%upgradable_repository",
-                "attributes": {
-                    "netrc": "",
-                    "auth_patterns": {},
-                    "canonical_id": "",
-                    "patches": [],
-                    "patch_tool": "",
-                    "patch_args": [
-                        "-p0"
-                    ],
-                    "patch_cmds": [],
-                    "patch_cmds_win": [],
-                    "build_file_content": "",
-                    "workspace_file_content": "",
-                    "branch": "",
-                    "remote": "git://github.com/bazelbuild/bazel-skylib.git",
-                    "tag": "~1",
-                    "type": "tar.gz",
-                    "sha256": "839ee2a0ee5b728b7af73eac87b5e207ed2c8651b7bcf7c6142cdf4dd1ea738b",
-                    "strip_prefix": "bazel-skylib-e59b620b392a8ebbcf25879fc3fde52b4dc77535",
-                    "urls": [
-                        "https://github.com/bazelbuild/bazel-skylib/archive/e59b620b392a8ebbcf25879fc3fde52b4dc77535.tar.gz"
-                    ],
-                    "name": "bazel_skylib"
-                },
-                "output_tree_hash": "a3441e8200bc9cfc4b7fa401342adae7cda41ebd457ee90d5b134f57238796bb"
-            }
-        ]
-    },
-    {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'remote_coverage_tools' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /DEFAULT.WORKSPACE.SUFFIX:11:1",
         "original_attributes": {
             "name": "remote_coverage_tools",
             "urls": [
@@ -301,6 +264,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'remote_java_tools_darwin' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:201:1",
         "original_attributes": {
             "name": "remote_java_tools_darwin",
             "urls": [
@@ -340,6 +304,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'remote_java_tools_linux' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:179:1",
         "original_attributes": {
             "name": "remote_java_tools_linux",
             "urls": [
@@ -379,6 +344,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'remote_java_tools_windows' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:190:1",
         "original_attributes": {
             "name": "remote_java_tools_windows",
             "urls": [
@@ -418,6 +384,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'remotejdk11_linux' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:131:1",
         "original_attributes": {
             "name": "remotejdk11_linux",
             "urls": [
@@ -458,6 +425,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'remotejdk11_linux_aarch64' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:143:1",
         "original_attributes": {
             "name": "remotejdk11_linux_aarch64",
             "urls": [
@@ -498,6 +466,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'remotejdk11_macos' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:155:1",
         "original_attributes": {
             "name": "remotejdk11_macos",
             "urls": [
@@ -538,6 +507,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'remotejdk11_win' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:167:1",
         "original_attributes": {
             "name": "remotejdk11_win",
             "urls": [
@@ -578,6 +548,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'rules_cc' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:223:1",
         "original_attributes": {
             "name": "rules_cc",
             "urls": [
@@ -618,6 +589,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'rules_java' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:211:1",
         "original_attributes": {
             "name": "rules_java",
             "urls": [
@@ -658,6 +630,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'rules_proto' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/utils.bzl:201:9\n - /DEFAULT.WORKSPACE.SUFFIX:235:1",
         "original_attributes": {
             "name": "rules_proto",
             "urls": [
@@ -698,6 +671,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+        "definition_information": "Call stack for the definition of repository 'android_tools' which is a http_archive (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/build_defs/repo/http.bzl:296:16):\n - <builtin>\n - /DEFAULT.WORKSPACE.SUFFIX:267:1",
         "original_attributes": {
             "name": "android_tools",
             "url": "https://mirror.bazel.build/bazel_android_tools/android_tools_pkg-0.15.1.tar.gz",
@@ -746,6 +720,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/osx:xcode_configure.bzl%xcode_autoconf",
+        "definition_information": "Call stack for the definition of repository 'local_config_xcode' which is a xcode_autoconf (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/osx/xcode_configure.bzl:265:18):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/osx/xcode_configure.bzl:276:5\n - /DEFAULT.WORKSPACE.SUFFIX:310:1",
         "original_attributes": {
             "name": "local_config_xcode",
             "xcode_locator": "@bazel_tools//tools/osx:xcode_locator.m"
@@ -763,6 +738,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/sh:sh_configure.bzl%sh_config",
+        "definition_information": "Call stack for the definition of repository 'local_config_sh' which is a sh_config (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/sh/sh_configure.bzl:72:13):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/sh/sh_configure.bzl:83:5\n - /DEFAULT.WORKSPACE.SUFFIX:313:1",
         "original_attributes": {
             "name": "local_config_sh"
         },
@@ -778,6 +754,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/cpp:cc_configure.bzl%cc_autoconf",
+        "definition_information": "Call stack for the definition of repository 'local_config_cc' which is a cc_autoconf (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/cpp/cc_configure.bzl:143:15):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/cpp/cc_configure.bzl:179:5\n - /DEFAULT.WORKSPACE.SUFFIX:317:1",
         "original_attributes": {
             "name": "local_config_cc"
         },
@@ -793,6 +770,7 @@ resolved = [
     },
     {
         "original_rule_class": "@bazel_tools//tools/cpp:cc_configure.bzl%cc_autoconf_toolchains",
+        "definition_information": "Call stack for the definition of repository 'local_config_cc_toolchains' which is a cc_autoconf_toolchains (rule definition at /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/cpp/cc_configure.bzl:79:26):\n - <builtin>\n - /home/pete/.cache/bazel/_bazel_pete/de9c7363077ecdcbab241717e92f964c/external/bazel_tools/tools/cpp/cc_configure.bzl:178:5\n - /DEFAULT.WORKSPACE.SUFFIX:317:1",
         "original_attributes": {
             "name": "local_config_cc_toolchains"
         },

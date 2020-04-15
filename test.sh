@@ -11,6 +11,14 @@ make_resolved.bzl_hermetic() {
 	mv $L~ $L
 }
 
+snap_resolved() {
+	snaped=$(mktemp)
+	awk '/"@bazel_upgradable\/\/rules:repo.bzl%upgradable_repository",/,/"original_rule_class":/' $L \
+	| grep -vF '"output_tree_hash":' \
+	>"$snaped"
+	echo "$snaped"
+}
+
 echo
 echo Updating scripts
 echo
@@ -44,9 +52,13 @@ for workspace in example_*; do
 	echo "$workspace"
 	pushd "$workspace" >/dev/null
 
+	before=$(snap_resolved)
 	rm $L
 	$BAZEL sync
 	make_resolved.bzl_hermetic
+	after=$(snap_resolved)
+	diff -y <(cat "$before" && rm "$before") <(cat "$after" && rm "$after")
+	git add $L
 	git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
 
 	popd >/dev/null

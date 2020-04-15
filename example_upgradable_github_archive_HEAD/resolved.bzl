@@ -121,6 +121,7 @@ resolved = [
                     "branch": "master",
                     "remote": "git://github.com/bazelbuild/bazel-skylib.git",
                     "tag": "",
+                    "type": "tar.gz",
                     "sha256": "a89898b28fb596ba8df76fe361597d08659dd58b7f54cb5ece5251f522de0691",
                     "strip_prefix": "bazel-skylib-feb52960ebd8797421b599194ad6ac7da3fc7600",
                     "urls": [

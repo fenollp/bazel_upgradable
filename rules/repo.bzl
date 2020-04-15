@@ -145,19 +145,30 @@ _attrs_for_upgradable_repository = _ATTRS_INHERITED_FROM_HTTP_ARCHIVE
 _attrs_for_upgradable_repository["branch"] = attr.string()
 _attrs_for_upgradable_repository["remote"] = attr.string(mandatory = True)
 _attrs_for_upgradable_repository["tag"] = attr.string()
+_attrs_for_upgradable_repository["type"] = attr.string()
 _attrs_for_upgradable_repository["sha256"] = attr.string(doc = "Internal")
 _attrs_for_upgradable_repository["strip_prefix"] = attr.string(doc = "Internal")
 _attrs_for_upgradable_repository["urls"] = attr.string_list(doc = "Internal")
 
-def _prefix_for(hosting, repo, commit):
-    if hosting == "github":
-        return "{}-{}".format(repo, commit)
-    fail("PLEASE REPORT: _prefix_for({}, {}, {})".format(hosting, repo, commit))
+def _type_for(**kwargs):
+    if kwargs["hosting"] == "github":
+        return "tar.gz"
+    elif kwargs["hosting"] == "gitlab":
+        return "zip"
+    else:
+        fail("PLEASE REPORT: _type_for({})".format(kwargs))
 
-def _archive_for(hosting, host, owner, repo, commit):
-    if hosting == "github":
-        return "https://{}/{}/{}/archive/{}.tar.gz".format(host, owner, repo, commit)
-    fail("PLEASE REPORT: _archive_for({}, {}, {}, {}, {})".format(hosting, host, owner, repo, commit))
+def _prefix_for(**kwargs):
+    if kwargs["hosting"] in ["github", "gitlab"]:
+        return "{repo}-{commit}".format(**kwargs)
+    fail("PLEASE REPORT: _prefix_for({})".format(kwargs))
+
+def _archive_for(**kwargs):
+    if kwargs["hosting"] == "github":
+        return "https://{host}/{owner}/{repo}/archive/{commit}".format(**kwargs)
+    if kwargs["hosting"] == "gitlab":
+        return "https://{host}/{owner}/{repo}/-/archive/{commit}/{repo}-{commit}".format(**kwargs)
+    fail("PLEASE REPORT: _archive_for({})".format(kwargs))
 
 def _impl_for_upgradable_repository(ctx):
     """Implementation of the upgradable_repository rule."""
@@ -169,18 +180,28 @@ def _impl_for_upgradable_repository(ctx):
     if len([None for x in [ctx.attr.branch, ctx.attr.tag] if x]) != 1:
         fail("Exactly one of branch or tag must be provided")
 
-    remote_split = ctx.attr.remote.split("/")
-    if len(remote_split) != 5:
-        fail("A remote must be of the form scheme://host/owner/repo")
-    scheme, _, host, owner, repo = remote_split
-    if scheme == "git:":
-        if repo.endswith(".git"):
-            repo = repo[:-len(".git")]
+    scheme, host, owner, repo = None, None, None, None
+    remote_slashed = ctx.attr.remote.split("/")
+    remote_exploded = ctx.attr.remote \
+        .replace("@", " ") \
+        .replace(":", " ") \
+        .replace("/", " ") \
+        .split(" ")
+    if len(remote_slashed) == 5:
+        scheme, _, host, owner, repo = remote_slashed
+    elif len(remote_exploded) == 4:
+        scheme, host, owner, repo = remote_exploded
     else:
+        fail("A remote must be of the form scheme://host/owner/repo or https://host/owner/repo")
+    if scheme not in ["git:", "https:"]:
         fail("Unsupported scheme '{}'".format(scheme))
+    if repo.endswith(".git"):
+        repo = repo[:-len(".git")]
     hosting = None
     if host == "github.com":
         hosting = "github"
+    elif host == "gitlab.com":
+        hosting = "gitlab"
     else:
         fail("Unsupported hosting with {}".format(host))
 
@@ -189,6 +210,7 @@ def _impl_for_upgradable_repository(ctx):
     all_urls = None
     strip_prefix = None
     if ctx.attr.sha256 and ctx.attr.strip_prefix and ctx.attr.urls:
+        typ = ctx.attr.type
         all_urls = ctx.attr.urls
         strip_prefix = ctx.attr.strip_prefix
     else:
@@ -199,15 +221,23 @@ def _impl_for_upgradable_repository(ctx):
             args = ["Tag", ref, ctx.attr.remote, ctx.attr.tag, commit]
         print("{} {} of {} satisfies constraint {} (commit = {})".format(*args))
 
-        all_urls = [_archive_for(hosting, host, owner, repo, commit)]
-        strip_prefix = _prefix_for(hosting, repo, commit)
+        kwargs = {
+            "hosting": hosting,
+            "host": host,
+            "owner": owner,
+            "repo": repo,
+            "commit": commit,
+        }
+        typ = _type_for(**kwargs)
+        all_urls = [_archive_for(**kwargs) + "." + typ]
+        strip_prefix = _prefix_for(**kwargs)
 
     auth = _get_auth(ctx, all_urls)
     download_info = ctx.download_and_extract(
         all_urls,
         "",
         ctx.attr.sha256,
-        "tar.gz",
+        typ,
         strip_prefix,
         canonical_id = ctx.attr.canonical_id,
         auth = auth,
@@ -218,6 +248,7 @@ def _impl_for_upgradable_repository(ctx):
     return update_attrs(ctx.attr, attrs, {
         "sha256": download_info.sha256,
         "strip_prefix": strip_prefix,
+        "type": typ,
         "urls": all_urls,
     })
 

@@ -1,0 +1,14 @@
+workspace(name = "example_upgradable_gitlab_archive_constrained")
+
+local_repository(
+    name = "bazel_upgradable",
+    path = "..",
+)
+
+load("@bazel_upgradable//rules:repo.bzl", "upgradable_repository")
+
+upgradable_repository(
+    name = "radamsa",
+    remote = "https://gitlab.com/akihe/radamsa.git",
+    tag = "!=0.5",
+)

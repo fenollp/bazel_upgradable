@@ -10,7 +10,7 @@ load("@bazel_upgradable//rules:repo.bzl", "upgradable_repository")
 upgradable_repository(
     name = "bazel_skylib",
     remote = "git://github.com/bazelbuild/bazel-skylib.git",
-    tag = "~=0.8",
+    tag = "~1",
 )
 
 load("@bazel_skylib//lib:versions.bzl", "versions")

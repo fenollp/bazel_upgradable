@@ -34,10 +34,18 @@ load("@bazel_upgradable//rules:repo.bzl", "upgradable_repository")
 
 ### SemVer constraints
 ```python
+# Locking on major of a GitHub tag
 upgradable_repository(
     name = "bazel_skylib",
     remote = "git://github.com/bazelbuild/bazel-skylib.git",
-    tag = "~=0.8",
+    tag = "~1",
+)
+
+# Blacklisting part of an interval of tags published on Gitlab
+upgradable_repository(
+    name = "radamsa",
+    remote = "git@gitlab.com:akihe/radamsa.git",
+    tag = "!=0.5",
 )
 ```
 
@@ -61,10 +69,7 @@ Ongoing issues:
 ## TODO
 
 https://raw.githubusercontent.com/bazelbuild/bazel/ca2733c3ec4d0d5ebfe6b3c4b8dcee3c8855cf6b/tools/build_defs/repo/git.bzl
-```
-git ls-remote git@gitlab.com:akihe/radamsa.git
 9fae1f5ee4c238064c845b6a99e5d6f8631f0c88    refs/tags/v0.6
-```
 https://docs.gitlab.com/ce/api/repositories.html#get-file-archive
 https://gitlab.com/gitlab-org/gitlab-foss/-/issues/31530
 https://gitlab.com/akihe/radamsa/-/archive/develop/radamsa-develop.tar.gz
