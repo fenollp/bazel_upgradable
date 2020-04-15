@@ -57,12 +57,23 @@ for workspace in example_*; do
 	$BAZEL sync
 	make_resolved.bzl_hermetic
 	after=$(snap_resolved)
-	diff -y \
-		<(cat "$before" && rm "$before") \
-		<(cat "$after"  && rm "$after") \
-		| grep '[<|>]'
-	git add $L
-	git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
+
+    case "$workspace" in
+        *upgradable*HEAD*)
+            # Since this example follows HEAD we expect these values to change:
+            # * sha256
+            # * strip_prefix
+            # * urls
+            # * output_tree_hash
+	        git --no-pager diff . && [[ 23 -eq "$(git diff . | wc -l)" ]] && git checkout -- $L
+        ;;
+        *)
+	        diff --width=256 -y \
+		         <(cat "$before" && rm "$before") \
+		         <(cat "$after"  && rm "$after")
+	        git add $L
+	        git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
+    esac
 
 	popd >/dev/null
 done
