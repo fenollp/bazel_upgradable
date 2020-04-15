@@ -57,7 +57,10 @@ for workspace in example_*; do
 	$BAZEL sync
 	make_resolved.bzl_hermetic
 	after=$(snap_resolved)
-	diff -y <(cat "$before" && rm "$before") <(cat "$after" && rm "$after")
+	diff -y \
+		<(cat "$before" && rm "$before") \
+		<(cat "$after"  && rm "$after") \
+		| grep '[<|>]'
 	git add $L
 	git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
 
