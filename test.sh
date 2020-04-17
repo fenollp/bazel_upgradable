@@ -24,7 +24,7 @@ echo Updating scripts
 echo
 
 ./sync.sh
-git --no-pager diff -- . && [[ 0 -eq "$(git diff -- . | wc -l)" ]]
+git --no-pager diff -- sync.sh && [[ 0 -eq "$(git diff -- sync.sh | wc -l)" ]]
 
 
 echo
@@ -51,6 +51,9 @@ for workspace in example_*; do
 	echo
 	echo "$workspace"
 	pushd "$workspace" >/dev/null
+
+	# FIXME: https://stackoverflow.com/questions/60864626/cannot-fetch-eigen-with-bazel-406-not-acceptable
+	[[ "$workspace" = example_upgradable_gitlab_archive_constrained ]] && echo "SKIPPING GITLAB FOR NOW" && continue
 
 	before=$(snap_resolved)
 	rm $L
@@ -83,7 +86,8 @@ echo
 echo Running locked, again
 echo
 
-for workspace in example_*upgradable*; do
+for workspace in example_*; do
+    [[ "$workspace" != *upgradable* ]] && continue
 	echo
 	echo "$workspace"
 	pushd "$workspace" >/dev/null

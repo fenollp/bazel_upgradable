@@ -152,9 +152,9 @@ _attrs_for_upgradable_repository["urls"] = attr.string_list(doc = "Internal")
 
 def _type_for(**kwargs):
     if kwargs["hosting"] == "github":
-        return "tar.gz"
+        return "tar.gz"  # Often fewer bytes than "zip"
     elif kwargs["hosting"] == "gitlab":
-        return "zip"
+        return "tar.bz2"
     else:
         fail("PLEASE REPORT: _type_for({})".format(kwargs))
 
@@ -167,7 +167,8 @@ def _archive_for(**kwargs):
     if kwargs["hosting"] == "github":
         return "https://{host}/{owner}/{repo}/archive/{commit}".format(**kwargs)
     if kwargs["hosting"] == "gitlab":
-        return "https://{host}/{owner}/{repo}/-/archive/{commit}/{repo}-{commit}".format(**kwargs)
+        # FIXME return "https://{host}/{owner}/{repo}/-/archive/{commit}/{repo}-{commit}".format(**kwargs)
+        return "https://{host}/{owner}/{repo}/-/archive/{ref}/{repo}-{ref}".format(**kwargs)
     fail("PLEASE REPORT: _archive_for({})".format(kwargs))
 
 def _impl_for_upgradable_repository(ctx):
@@ -222,11 +223,12 @@ def _impl_for_upgradable_repository(ctx):
         print("{} {} of {} satisfies constraint {} (commit = {})".format(*args))
 
         kwargs = {
-            "hosting": hosting,
-            "host": host,
-            "owner": owner,
-            "repo": repo,
             "commit": commit,
+            "host": host,
+            "hosting": hosting,
+            "owner": owner,
+            "ref": ref,
+            "repo": repo,
         }
         typ = _type_for(**kwargs)
         all_urls = [_archive_for(**kwargs) + "." + typ]
