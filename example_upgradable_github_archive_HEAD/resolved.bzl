@@ -96,7 +96,7 @@ resolved = [
         "native": "bind(name = \"has_androidsdk\", actual = \"@bazel_tools//tools/android:always_false\")"
     },
     {
-        "original_rule_class": "@bazel_upgradable//rules:repo.bzl%upgradable_repository",
+        "original_rule_class": "@bazel_upgradable//:rule.bzl%upgradable_repository",
         "original_attributes": {
             "name": "bazel_skylib",
             "branch": "master",
@@ -104,7 +104,7 @@ resolved = [
         },
         "repositories": [
             {
-                "rule_class": "@bazel_upgradable//rules:repo.bzl%upgradable_repository",
+                "rule_class": "@bazel_upgradable//:rule.bzl%upgradable_repository",
                 "attributes": {
                     "netrc": "",
                     "auth_patterns": {},
@@ -119,11 +119,12 @@ resolved = [
                     "build_file_content": "",
                     "workspace_file_content": "",
                     "branch": "master",
+                    "release_matches": "",
                     "remote": "git://github.com/bazelbuild/bazel-skylib.git",
-                    "tag": "",
-                    "type": "tar.gz",
                     "sha256": "a89898b28fb596ba8df76fe361597d08659dd58b7f54cb5ece5251f522de0691",
                     "strip_prefix": "bazel-skylib-feb52960ebd8797421b599194ad6ac7da3fc7600",
+                    "tag": "",
+                    "type": "tar.gz",
                     "urls": [
                         "https://github.com/bazelbuild/bazel-skylib/archive/feb52960ebd8797421b599194ad6ac7da3fc7600.tar.gz"
                     ],

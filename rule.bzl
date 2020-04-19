@@ -1,4 +1,3 @@
-load(":utils.bzl", "sat")
 load(
     "@bazel_tools//tools/build_defs/repo:utils.bzl",
     "patch",
@@ -143,25 +142,28 @@ unless it was added to the cache by a request with the same canonical id.
 
 _attrs_for_upgradable_repository = _ATTRS_INHERITED_FROM_HTTP_ARCHIVE
 _attrs_for_upgradable_repository["branch"] = attr.string()
+_attrs_for_upgradable_repository["release_matches"] = attr.string()
 _attrs_for_upgradable_repository["remote"] = attr.string(mandatory = True)
-_attrs_for_upgradable_repository["tag"] = attr.string()
-_attrs_for_upgradable_repository["type"] = attr.string()
 _attrs_for_upgradable_repository["sha256"] = attr.string(doc = "Internal")
 _attrs_for_upgradable_repository["strip_prefix"] = attr.string(doc = "Internal")
+_attrs_for_upgradable_repository["tag"] = attr.string()
+_attrs_for_upgradable_repository["type"] = attr.string()
 _attrs_for_upgradable_repository["urls"] = attr.string_list(doc = "Internal")
+
+def _please_report(fname, kwargs):
+    fail("BUG! Please report: {}({})".format(fname, kwargs))
 
 def _type_for(**kwargs):
     if kwargs["hosting"] == "github":
         return "tar.gz"  # Often fewer bytes than "zip"
     elif kwargs["hosting"] == "gitlab":
         return "tar.bz2"
-    else:
-        fail("PLEASE REPORT: _type_for({})".format(kwargs))
+    _please_report("_type_for",kwargs)
 
 def _prefix_for(**kwargs):
     if kwargs["hosting"] in ["github", "gitlab"]:
         return "{repo}-{commit}".format(**kwargs)
-    fail("PLEASE REPORT: _prefix_for({})".format(kwargs))
+    _please_report("_prefix_for",kwargs)
 
 def _archive_for(**kwargs):
     if kwargs["hosting"] == "github":
@@ -169,7 +171,78 @@ def _archive_for(**kwargs):
     if kwargs["hosting"] == "gitlab":
         # FIXME return "https://{host}/{owner}/{repo}/-/archive/{commit}/{repo}-{commit}".format(**kwargs)
         return "https://{host}/{owner}/{repo}/-/archive/{ref}/{repo}-{ref}".format(**kwargs)
-    fail("PLEASE REPORT: _archive_for({})".format(kwargs))
+    _please_report("_archive_for",kwargs)
+
+def _git_ls_remote(ctx, remote):
+    result = ctx.execute(["git", "ls-remote", "--refs", remote])
+    if result.return_code != 0:
+        fail("Could not fetch remote refs from {}:\n{}".format(remote, result.stderr))
+    return [
+        line
+        for line in result.stdout.splitlines()
+        if
+        # Remove dereferenced tags
+        line.rfind("^{}") == -1 and
+        # Remove GitHub's pull requests
+        line.find("refs/pull/") == -1 and
+        # Remove Gitlab's merge requests
+        line.find("refs/merge-requests/") == -1
+    ]
+
+def _ref_uri(ref_kind, ref = ""):
+    if ref_kind == "tag":
+        return "\trefs/tags/" + ref
+    return "\trefs/heads/" + ref
+
+def _ref_matching_exactly(lines, remote, ref_kind, ref):
+    pattern = _ref_uri(ref_kind, ref)
+    for line in lines:
+        index = line.rfind(pattern)
+        if index != -1:
+            return line[:index]
+    fail("There is no {} {} in {}".format(ref_kind, ref, remote))
+
+def _refs_matching(lines, pattern):
+    pattern_len = len(pattern)
+    refs = {}
+    for line in lines:
+        index = line.rfind(pattern)
+        if index != -1:
+            commit, ref = line[:index], line[index + pattern_len:]
+            refs[ref] = commit
+    return refs
+
+def _sat_semver_constraint(ctx, remote, ref_kind, constraint, refs):
+    # TODO: migrate to Starlark to drop Python dependency
+    script = ctx.path("../bazel_upgradable/sat_semver.py")
+    args = ["python", script, constraint]
+    args.extend(refs.keys())
+    result = ctx.execute(args)
+    if result.return_code == 42:
+        fail("No {} matching {} in {}".format(ref_kind, constraint, remote))
+    if result.return_code != 0:
+        fail("Failed running {}:\n{}".format(script, result.stderr))
+    ref = result.stdout.splitlines()[0]
+    return ref, refs[ref]
+
+def _is_constraint(constraint):
+    for op in ["<", "<=", "|=", "==", ">=", ">", "!=", "^", "~", "~="]:
+        if len(constraint) > len(op) and op in constraint[:len(op)]:
+            return True
+    return False
+
+def _sat(ctx, remote, branch, tag, release_matches):
+    lines = _git_ls_remote(ctx, remote)
+
+    ref_kind, constraint = "branch", branch
+    if tag:
+        ref_kind, constraint = "tag", tag
+
+    if not _is_constraint(constraint):
+        return constraint, _ref_matching_exactly(lines, remote, ref_kind, constraint)
+
+    refs = _refs_matching(lines, _ref_uri(ref_kind))
+    return _sat_semver_constraint(ctx, remote, ref_kind, constraint, refs)
 
 def _impl_for_upgradable_repository(ctx):
     """Implementation of the upgradable_repository rule."""
@@ -178,7 +251,7 @@ def _impl_for_upgradable_repository(ctx):
 
     if not ctx.attr.branch and not ctx.attr.tag:
         ctx.attr["branch"] = "master"
-    if len([None for x in [ctx.attr.branch, ctx.attr.tag] if x]) != 1:
+    if ctx.attr.branch and ctx.attr.tag:
         fail("Exactly one of branch or tag must be provided")
 
     scheme, host, owner, repo = None, None, None, None
@@ -215,7 +288,13 @@ def _impl_for_upgradable_repository(ctx):
         all_urls = ctx.attr.urls
         strip_prefix = ctx.attr.strip_prefix
     else:
-        ref, commit = sat(ctx, ctx.attr.remote, ctx.attr.branch, ctx.attr.tag)
+        ref, commit = _sat(
+            ctx,
+            ctx.attr.remote,
+            ctx.attr.branch,
+            ctx.attr.tag,
+            ctx.attr.release_matches,
+        )
 
         args = ["Branch", ref, ctx.attr.remote, ctx.attr.branch, commit]
         if ctx.attr.tag:
@@ -246,8 +325,7 @@ def _impl_for_upgradable_repository(ctx):
     )
     workspace_and_buildfile(ctx)
     patch(ctx)
-    attrs = _attrs_for_upgradable_repository.keys()
-    return update_attrs(ctx.attr, attrs, {
+    return update_attrs(ctx.attr, _attrs_for_upgradable_repository.keys(), {
         "sha256": download_info.sha256,
         "strip_prefix": strip_prefix,
         "type": typ,

@@ -27,4 +27,4 @@ Sync__sat_semver.py() {
 	} >>"$script"
 }
 
-Sync__sat_semver.py rules/sat_semver.py
+Sync__sat_semver.py ./sat_semver.py

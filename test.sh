@@ -13,7 +13,7 @@ make_resolved.bzl_hermetic() {
 
 snap_resolved() {
 	snaped=$(mktemp)
-	awk '/"@bazel_upgradable\/\/rules:repo.bzl%upgradable_repository",/,/"original_rule_class":/' $L \
+	awk '/"@bazel_upgradable\/\/:rule.bzl%upgradable_repository",/,/"original_rule_class":/' $L \
 	| grep -vF '"output_tree_hash":' \
 	>"$snaped"
 	echo "$snaped"
@@ -61,22 +61,30 @@ for workspace in example_*; do
 	make_resolved.bzl_hermetic
 	after=$(snap_resolved)
 
-    case "$workspace" in
-        *upgradable*HEAD*)
-            # Since this example follows HEAD we expect these values to change:
-            # * sha256
-            # * strip_prefix
-            # * urls
-            # * output_tree_hash
-	        git --no-pager diff . && [[ 23 -eq "$(git diff . | wc -l)" ]] && git checkout -- $L
-        ;;
-        *)
-	        diff --width=256 -y \
-		         <(cat "$before" && rm "$before") \
-		         <(cat "$after"  && rm "$after")
-	        git add $L
-	        git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
-    esac
+	case "$workspace" in
+		*upgradable*HEAD*)
+			# Since this example follows HEAD we expect these values to change:
+			# * sha256
+			# * strip_prefix
+			# * urls
+			# * output_tree_hash
+			if [[ 25 -ne "$(git diff . | wc -l)" ]]; then
+				git --no-pager diff .
+				exit 1
+			fi
+			git checkout -- $L
+		;;
+		*)
+			# There should be no changes here however:
+			diff --width=256 -y \
+				 <(cat "$before" && rm "$before") \
+				 <(cat "$after"  && rm "$after")
+			git add $L
+			if [[ 0 -ne "$(git diff . | wc -l)" ]]; then
+				git --no-pager diff .
+				exit 1
+			fi
+	esac
 
 	popd >/dev/null
 done
@@ -87,7 +95,7 @@ echo Running locked, again
 echo
 
 for workspace in example_*; do
-    [[ "$workspace" != *upgradable* ]] && continue
+	[[ "$workspace" != *upgradable* ]] && continue
 	echo
 	echo "$workspace"
 	pushd "$workspace" >/dev/null
@@ -98,3 +106,5 @@ for workspace in example_*; do
 	popd >/dev/null
 done
 git --no-pager diff -- example_* && [[ 0 -eq "$(git diff -- example_* | wc -l)" ]]
+
+echo PASSED

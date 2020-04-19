@@ -5,7 +5,7 @@ local_repository(
     path = "..",
 )
 
-load("@bazel_upgradable//rules:repo.bzl", "upgradable_repository")
+load("@bazel_upgradable//:rule.bzl", "upgradable_repository")
 
 upgradable_repository(
     name = "bazel_skylib",

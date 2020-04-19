@@ -26,7 +26,7 @@ http_archive(
     url = "https://github.com/fenollp/bazel_upgradable/archive/master.zip",
 )
 
-load("@bazel_upgradable//rules:repo.bzl", "upgradable_repository")
+load("@bazel_upgradable//:rule.bzl", "upgradable_repository")
 
 # Then add your dependencies here
 # and run `bazel sync`
