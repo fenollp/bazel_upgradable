@@ -82,10 +82,10 @@ resolved = [
     {
         "original_rule_class": "local_repository",
         "original_attributes": {
-            "name": "example_upgradable_github_archive_HEAD",
+            "name": "example_upgradable_gitlab_archive_constrained",
             "path": "."
         },
-        "native": "local_repository(name = \"example_upgradable_github_archive_HEAD\", path = \".\")"
+        "native": "local_repository(name = \"example_upgradable_gitlab_archive_constrained\", path = \".\")"
     },
     {
         "original_rule_class": "bind",
@@ -94,45 +94,6 @@ resolved = [
             "actual": "@bazel_tools//tools/android:always_false"
         },
         "native": "bind(name = \"has_androidsdk\", actual = \"@bazel_tools//tools/android:always_false\")"
-    },
-    {
-        "original_rule_class": "@bazel_upgradable//:rule.bzl%upgradable_repository",
-        "original_attributes": {
-            "name": "bazel_skylib",
-            "branch": "master",
-            "remote": "git://github.com/bazelbuild/bazel-skylib.git"
-        },
-        "repositories": [
-            {
-                "rule_class": "@bazel_upgradable//:rule.bzl%upgradable_repository",
-                "attributes": {
-                    "netrc": "",
-                    "auth_patterns": {},
-                    "canonical_id": "",
-                    "patches": [],
-                    "patch_tool": "",
-                    "patch_args": [
-                        "-p0"
-                    ],
-                    "patch_cmds": [],
-                    "patch_cmds_win": [],
-                    "build_file_content": "",
-                    "workspace_file_content": "",
-                    "branch": "master",
-                    "release": "",
-                    "remote": "git://github.com/bazelbuild/bazel-skylib.git",
-                    "sha256": "a89898b28fb596ba8df76fe361597d08659dd58b7f54cb5ece5251f522de0691",
-                    "strip_prefix": "bazel-skylib-feb52960ebd8797421b599194ad6ac7da3fc7600",
-                    "tag": "",
-                    "type": "tar.gz",
-                    "urls": [
-                        "https://github.com/bazelbuild/bazel-skylib/archive/feb52960ebd8797421b599194ad6ac7da3fc7600.tar.gz"
-                    ],
-                    "name": "bazel_skylib"
-                },
-                "output_tree_hash": "045c61808d340ae6aa9f6b7bf3ef36fecddc087b590c5d879385dfdf44ceb807"
-            }
-        ]
     },
     {
         "original_rule_class": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",

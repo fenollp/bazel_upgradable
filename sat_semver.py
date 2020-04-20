@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import sys
+
 # -*- coding: utf-8 -*-
 # Copyright (c) The python-semanticversion project
 # This code is distributed under the two-clause BSD License.
@@ -1420,6 +1422,7 @@ class NpmSpec(BaseSpec):
                     return [cls.range(Range.OP_LT, target.next_minor())]
                 else:
                     return [cls.range(Range.OP_LTE, target)]
+
 only_version = re.compile(r'([0-9]+(\.[0-9]+)+)')
 constraint = sys.argv[1]
 refs = {}

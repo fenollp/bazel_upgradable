@@ -3,14 +3,20 @@
 set -eu
 set -o pipefail
 
+URL=${URL:-https://raw.githubusercontent.com/rbarrois/python-semanticversion/master/semantic_version/base.py}
+
 Sync__sat_semver.py() {
 	script=$1; shift
 	{
+		echo '# -*- coding: utf-8 -*-'
 		echo 'from __future__ import print_function'
 		echo 'import sys'
+		echo
 	} >"$script"
-	curl -#fSL https://raw.githubusercontent.com/rbarrois/python-semanticversion/master/semantic_version/base.py >>"$script"
+	curl -#fSL "$URL" >>"$script"
 	{
+		echo
+		# TODO: only_version doesn't account for semver rc/pre/alpha
 		echo "only_version = re.compile(r'([0-9]+(\.[0-9]+)+)')" # TODO: use version_re from ^
 		echo 'constraint = sys.argv[1]'
 		echo 'refs = {}'
@@ -26,4 +32,4 @@ Sync__sat_semver.py() {
 	} >>"$script"
 }
 
-Sync__sat_semver.py rules/sat_semver.py
+Sync__sat_semver.py ./sat_semver.py

@@ -1,7 +1,6 @@
-#!/bin/bash
-
-set -eu
+#!/bin/bash -eu
 set -o pipefail
+
 git --no-pager diff -- example_* && [[ 0 -eq "$(git diff -- example_* | wc -l)" ]]
 L=resolved.bzl
 
@@ -16,7 +15,7 @@ echo Updating scripts
 echo
 
 ./sync.sh
-git --no-pager diff -- . && [[ 0 -eq "$(git diff -- . | wc -l)" ]]
+git --no-pager diff -- sync.sh && [[ 0 -eq "$(git diff -- sync.sh | wc -l)" ]]
 
 
 echo
@@ -44,10 +43,43 @@ for workspace in example_*; do
 	echo "$workspace"
 	pushd "$workspace" >/dev/null
 
+	# FIXME: https://stackoverflow.com/questions/60864626/cannot-fetch-eigen-with-bazel-406-not-acceptable
+	[[ "$workspace" = example_upgradable_gitlab_archive_constrained ]] && echo "SKIPPING: example_upgradable_gitlab_archive_constrained" && continue
+
+	cp $L before.py
 	rm $L
 	$BAZEL sync
 	make_resolved.bzl_hermetic
-	git --no-pager diff . && [[ 0 -eq "$(git diff . | wc -l)" ]]
+	$BAZEL clean --expunge
+	cp $L after.py
+
+	set +e
+	python ../diff.py "$PWD"
+	diffed=$?
+	set -e
+	rm before.py after.py
+
+	if [[ "$diffed" -ne 0 ]]; then
+		case "$workspace" in
+			*upgradable*HEAD*)
+				# Since this example follows HEAD we expect these values to change:
+				# * sha256
+				# * strip_prefix
+				# * urls
+				# * output_tree_hash
+				exit $diffed #FIXME
+			;;
+			*)
+	            # There may be changes to values we do not care about here:
+	            # * output_tree_hash
+				exit $diffed #FIXME
+		esac
+	fi
+	git checkout -- $L
+	if [[ 0 -ne "$(git diff . | wc -l)" ]]; then
+		git --no-pager diff .
+		exit 1
+	fi
 
 	popd >/dev/null
 done
@@ -57,7 +89,8 @@ echo
 echo Running locked, again
 echo
 
-for workspace in example_*upgradable*; do
+for workspace in example_*; do
+	[[ "$workspace" != *upgradable* ]] && continue
 	echo
 	echo "$workspace"
 	pushd "$workspace" >/dev/null
@@ -68,3 +101,5 @@ for workspace in example_*upgradable*; do
 	popd >/dev/null
 done
 git --no-pager diff -- example_* && [[ 0 -eq "$(git diff -- example_* | wc -l)" ]]
+
+echo PASSED
