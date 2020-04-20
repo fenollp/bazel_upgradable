@@ -32,6 +32,14 @@ load("@bazel_upgradable//:rule.bzl", "upgradable_repository")
 # and run `bazel sync`
 ```
 
+### Track HEAD
+```python
+upgradable_repository(
+    name = "bazel_skylib",
+    remote = "git://github.com/bazelbuild/bazel-skylib.git",
+)
+```
+
 ### SemVer constraints
 ```python
 # Locking on major of a GitHub tag
@@ -49,13 +57,8 @@ upgradable_repository(
 )
 ```
 
-### Track HEAD
-```python
-upgradable_repository(
-    name = "bazel_skylib",
-    remote = "git://github.com/bazelbuild/bazel-skylib.git",
-)
-```
+### Depend on GitHub releases
+See https://github.com/voidstarHQ/voidstar
 
 ## Notes
 

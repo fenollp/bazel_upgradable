@@ -68,6 +68,9 @@ for workspace in example_*; do
 			# * strip_prefix
 			# * urls
 			# * output_tree_hash
+			diff --width=256 -y \
+				 <(cat "$before" && rm "$before") \
+				 <(cat "$after"  && rm "$after") || true
 			if [[ 25 -ne "$(git diff . | wc -l)" ]]; then
 				git --no-pager diff .
 				exit 1
