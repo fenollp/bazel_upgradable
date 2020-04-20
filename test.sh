@@ -53,7 +53,7 @@ for workspace in example_*; do
 	pushd "$workspace" >/dev/null
 
 	# FIXME: https://stackoverflow.com/questions/60864626/cannot-fetch-eigen-with-bazel-406-not-acceptable
-	[[ "$workspace" = example_upgradable_gitlab_archive_constrained ]] && echo "SKIPPING GITLAB FOR NOW" && continue
+	[[ "$workspace" = example_upgradable_gitlab_archive_constrained ]] && echo "SKIPPING: example_upgradable_gitlab_archive_constrained" && continue
 
 	before=$(snap_resolved)
 	rm $L
