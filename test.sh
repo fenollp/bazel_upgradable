@@ -1,7 +1,6 @@
-#!/bin/bash
-
-set -eu
+#!/bin/bash -eu
 set -o pipefail
+
 git --no-pager diff -- example_* && [[ 0 -eq "$(git diff -- example_* | wc -l)" ]]
 L=resolved.bzl
 
@@ -9,14 +8,6 @@ L=resolved.bzl
 make_resolved.bzl_hermetic() {
 	grep -v -F '"definition_information": ' $L >$L~
 	mv $L~ $L
-}
-
-snap_resolved() {
-	snaped=$(mktemp)
-	awk '/"@bazel_upgradable\/\/:rule.bzl%upgradable_repository",/,/"original_rule_class":/' $L \
-	| grep -vF '"output_tree_hash":' \
-	>"$snaped"
-	echo "$snaped"
 }
 
 echo
@@ -55,39 +46,40 @@ for workspace in example_*; do
 	# FIXME: https://stackoverflow.com/questions/60864626/cannot-fetch-eigen-with-bazel-406-not-acceptable
 	[[ "$workspace" = example_upgradable_gitlab_archive_constrained ]] && echo "SKIPPING: example_upgradable_gitlab_archive_constrained" && continue
 
-	before=$(snap_resolved)
+	cp $L before.py
 	rm $L
 	$BAZEL sync
 	make_resolved.bzl_hermetic
-	after=$(snap_resolved)
+	$BAZEL clean --expunge
+	cp $L after.py
 
-	case "$workspace" in
-		*upgradable*HEAD*)
-			# Since this example follows HEAD we expect these values to change:
-			# * sha256
-			# * strip_prefix
-			# * urls
-			# * output_tree_hash
-			diff --width=256 -y \
-				 <(cat "$before" && rm "$before") \
-				 <(cat "$after"  && rm "$after") || true
-			if [[ 25 -ne "$(git diff . | wc -l)" ]]; then
-				git --no-pager diff .
-				exit 1
-			fi
-			git checkout -- $L
-		;;
-		*)
-			# There should be no changes here however:
-			diff --width=256 -y \
-				 <(cat "$before" && rm "$before") \
-				 <(cat "$after"  && rm "$after")
-			git add $L
-			if [[ 0 -ne "$(git diff . | wc -l)" ]]; then
-				git --no-pager diff .
-				exit 1
-			fi
-	esac
+	set +e
+	../diff.py "$PWD"
+	diffed=$?
+	set -e
+	rm before.py after.py
+
+	if [[ "$diffed" -ne 0 ]]; then
+		case "$workspace" in
+			*upgradable*HEAD*)
+				# Since this example follows HEAD we expect these values to change:
+				# * sha256
+				# * strip_prefix
+				# * urls
+				# * output_tree_hash
+				exit $diffed #FIXME
+			;;
+			*)
+	            # There may be changes to values we do not care about here:
+	            # * output_tree_hash
+				exit $diffed #FIXME
+		esac
+	fi
+	git checkout -- $L
+	if [[ 0 -ne "$(git diff . | wc -l)" ]]; then
+		git --no-pager diff .
+		exit 1
+	fi
 
 	popd >/dev/null
 done
