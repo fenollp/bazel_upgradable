@@ -250,7 +250,7 @@ def _github_releases(ctx, o):
     if "GITHUB_TOKEN" in ctx.os.environ:
         token = ctx.os.environ["GITHUB_TOKEN"]
     result = ctx.execute([
-        "python3",
+        "python",
         script,
         "https://api.github.com/repos/{owner}/{repo}/releases".format(**o),
         token,

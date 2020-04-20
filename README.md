@@ -2,7 +2,7 @@
 
 Use `bazel sync` to upgrade & lock your dependencies.
 
-Note: rules defined here download dependencies the same way `http_archive` does for best cache usage.
+Note: rules defined here download dependencies the same way `http_archive` does for best cache utilization.
 
 ## Getting started
 
@@ -22,7 +22,6 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
     name = "bazel_upgradable",
     strip_prefix = "bazel_upgradable-master",
-    type = "zip",
     url = "https://github.com/fenollp/bazel_upgradable/archive/master.zip",
 )
 
@@ -58,7 +57,17 @@ upgradable_repository(
 ```
 
 ### Depend on GitHub releases
-See https://github.com/voidstarHQ/voidstar
+Downstream example: https://github.com/voidstarHQ/voidstar
+```python
+upgradable_repository(
+    name = "glfw_osx",
+    build_file = "@//third_party:glfw3_osx.BUILD",
+    # {tag} and {tag_digits} are expanded during dependency resolution
+    release = "glfw-{tag_digits}.bin.MACOS.zip",
+    remote = "git://github.com/glfw/glfw.git",
+    tag = "~3",
+)
+```
 
 ## Notes
 
