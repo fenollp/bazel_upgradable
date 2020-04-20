@@ -73,6 +73,7 @@ upgradable_repository(
 
 Ongoing issues:
 * https://github.com/bazelbuild/bazel/issues/11067
+* https://groups.google.com/forum/#!searchin/bazel-discuss/406%7Csort:date/bazel-discuss/9_ZqijN3OV4/Re3roXXPAQAJ
 
 `bazel_upgradable` is an iteration on [bazel_lock](https://github.com/fenollp/bazel_lock).
 
