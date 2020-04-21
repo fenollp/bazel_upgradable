@@ -243,14 +243,19 @@ def _sat_git_ref(ctx, o):
         fail("No {ref_kind} matching {constraint} in {remote}".format(**o))
     return ref, commit
 
+def _python_executable(ctx):
+    # TODO: drop once the fog clears up...
+    if ctx.execute(["python3", "--version"]).return_code == 0:
+        return "python3"
+    return "python"
+
 def _github_releases(ctx, o):
-    # TODO: migrate to Starlark to drop Python dependency
     script = ctx.path("../bazel_upgradable/github_release_refs.py")
     token = ""
     if "GITHUB_TOKEN" in ctx.os.environ:
         token = ctx.os.environ["GITHUB_TOKEN"]
     result = ctx.execute([
-        "python",
+        _python_executable(ctx),
         script,
         "https://api.github.com/repos/{owner}/{repo}/releases".format(**o),
         token,
