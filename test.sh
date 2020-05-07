@@ -1,6 +1,10 @@
-#!/bin/bash -eu
-set -o pipefail
+#!/bin/bash
+set -euo pipefail
 
+BAZEL=bazel
+if command -v bazelisk; then
+	BAZEL=bazelisk
+fi
 git --no-pager diff -- example_* && [[ 0 -eq "$(git diff -- example_* | wc -l)" ]]
 L=resolved.bzl
 
