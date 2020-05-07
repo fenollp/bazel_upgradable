@@ -1,3 +1,6 @@
+### TODO: document setup
+
+# TODO: ./sync.sh with https://raw.githubusercontent.com/bazelbuild/bazel/master/tools/build_defs/repo/http.bzl
 load(
     "@bazel_tools//tools/build_defs/repo:utils.bzl",
     "patch",
@@ -60,7 +63,34 @@ def _get_auth(ctx, urls):
 
     return {}
 
-_ATTRS_INHERITED_FROM_HTTP_ARCHIVE = {
+_http_archive_attrs = {
+    "url": attr.string(
+        doc =
+            """A URL to a file that will be made available to Bazel.
+
+This must be a file, http or https URL. Redirections are followed.
+Authentication is not supported.
+
+This parameter is to simplify the transition from the native http_archive
+rule. More flexibility can be achieved by the urls parameter that allows
+to specify alternative URLs to fetch from.
+""",
+    ),
+    "urls": attr.string_list(
+        doc =
+            """A list of URLs to a file that will be made available to Bazel.
+
+Each entry must be a file, http or https URL. Redirections are followed.
+Authentication is not supported.""",
+    ),
+    "sha256": attr.string(
+        doc = """The expected SHA-256 of the file downloaded.
+
+This must match the SHA-256 of the file downloaded. _It is a security risk
+to omit the SHA-256 as remote files can change._ At best omitting this
+field will make your build non-hermetic. It is optional to make development
+easier but should be set before shipping.""",
+    ),
     "netrc": attr.string(
         doc = "Location of the .netrc file to use for authentication",
     ),
@@ -73,6 +103,34 @@ _ATTRS_INHERITED_FROM_HTTP_ARCHIVE = {
 If specified and non-empty, bazel will not take the archive from cache,
 unless it was added to the cache by a request with the same canonical id.
 """,
+    ),
+    "strip_prefix": attr.string(
+        doc = """A directory prefix to strip from the extracted files.
+
+Many archives contain a top-level directory that contains all of the useful
+files in archive. Instead of needing to specify this prefix over and over
+in the `build_file`, this field can be used to strip it from all of the
+extracted files.
+
+For example, suppose you are using `foo-lib-latest.zip`, which contains the
+directory `foo-lib-1.2.3/` under which there is a `WORKSPACE` file and are
+`src/`, `lib/`, and `test/` directories that contain the actual code you
+wish to build. Specify `strip_prefix = "foo-lib-1.2.3"` to use the
+`foo-lib-1.2.3` directory as your top-level directory.
+
+Note that if there are files outside of this directory, they will be
+discarded and inaccessible (e.g., a top-level license file). This includes
+files/directories that start with the prefix but are not in the directory
+(e.g., `foo-lib-1.2.3.release-notes`). If the specified prefix does not
+match a directory in the archive, Bazel will return an error.""",
+    ),
+    "type": attr.string(
+        doc = """The archive type of the downloaded file.
+
+By default, the archive type is determined from the file extension of the
+URL. If the file has no extension, you can explicitly specify one of the
+following: `"zip"`, `"jar"`, `"war"`, `"tar"`, `"tar.gz"`, `"tgz"`,
+`"tar.xz"`, or `tar.bz2`.""",
     ),
     "patches": attr.label_list(
         default = [],
@@ -140,15 +198,12 @@ unless it was added to the cache by a request with the same canonical id.
     ),
 }
 
-_attrs_for_upgradable_repository = _ATTRS_INHERITED_FROM_HTTP_ARCHIVE
-_attrs_for_upgradable_repository["branch"] = attr.string()
-_attrs_for_upgradable_repository["release"] = attr.string()
-_attrs_for_upgradable_repository["remote"] = attr.string(mandatory = True)
-_attrs_for_upgradable_repository["sha256"] = attr.string(doc = "Internal")
-_attrs_for_upgradable_repository["strip_prefix"] = attr.string(doc = "Internal")
-_attrs_for_upgradable_repository["tag"] = attr.string()
-_attrs_for_upgradable_repository["type"] = attr.string()
-_attrs_for_upgradable_repository["urls"] = attr.string_list(doc = "Internal")
+_rule_attrs = _http_archive_attrs
+_rule_attrs.pop("url")
+_rule_attrs["branch"] = attr.string()  #TODO: document
+_rule_attrs["release"] = attr.string()  #TODO: document
+_rule_attrs["remote"] = attr.string(mandatory = True)  #TODO: document
+_rule_attrs["tag"] = attr.string()  #TODO: document
 
 def _please_report(fname, o):
     fail("BUG! Please report: {}({})".format(fname, o))
@@ -379,7 +434,7 @@ def _impl_for_upgradable_repository(ctx):
     )
     workspace_and_buildfile(ctx)
     patch(ctx)
-    return update_attrs(ctx.attr, _attrs_for_upgradable_repository.keys(), {
+    return update_attrs(ctx.attr, _rule_attrs.keys(), {
         "sha256": download_info.sha256,
         "strip_prefix": strip_prefix,
         "type": typ,
@@ -388,5 +443,6 @@ def _impl_for_upgradable_repository(ctx):
 
 upgradable_repository = repository_rule(
     implementation = _impl_for_upgradable_repository,
-    attrs = _attrs_for_upgradable_repository,
+    attrs = _rule_attrs,
+    doc = "",  #TODO: document
 )
