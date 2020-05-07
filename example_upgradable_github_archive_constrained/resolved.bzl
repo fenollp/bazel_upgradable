@@ -126,7 +126,8 @@ resolved = [
                     "tag": "~1",
                     "type": "tar.gz",
                     "urls": [
-                        "https://github.com/bazelbuild/bazel-skylib/archive/e59b620b392a8ebbcf25879fc3fde52b4dc77535.tar.gz"
+                        "https://github.com/bazelbuild/bazel-skylib/archive/e59b620b392a8ebbcf25879fc3fde52b4dc77535.tar.gz",
+                        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/archive/e59b620b392a8ebbcf25879fc3fde52b4dc77535.tar.gz"
                     ],
                     "name": "bazel_skylib"
                 },
