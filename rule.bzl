@@ -358,6 +358,15 @@ def _impl_for_upgradable_repository(ctx):
         else:
             fail("Fetching releases of {host} is unsupported".format(**o))
 
+        # Attempt Bazel's mirroring of bazelbuild archives
+        mirrored = ""
+        for url in all_urls:
+            maybe_split = url.split("https://github.com/bazelbuild/")
+            if len(maybe_split) == 2:
+                mirrored = "https://mirror.bazel.build/github.com/bazelbuild/" + maybe_split[1]
+        if mirrored and mirrored not in all_urls:
+            all_urls.append(mirrored)
+
     auth = _get_auth(ctx, all_urls)
     download_info = ctx.download_and_extract(
         all_urls,
