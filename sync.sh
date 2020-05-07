@@ -1,11 +1,10 @@
 #!/bin/bash
 
-set -eu
-set -o pipefail
+set -euo pipefail
 
-URL=${URL:-https://raw.githubusercontent.com/rbarrois/python-semanticversion/master/semantic_version/base.py}
 
 Sync__sat_semver.py() {
+	URL=https://raw.githubusercontent.com/rbarrois/python-semanticversion/master/semantic_version/base.py
 	script=$1; shift
 	{
 		echo '# -*- coding: utf-8 -*-'
@@ -31,5 +30,6 @@ Sync__sat_semver.py() {
 		echo 'print(refs[selected])'
 	} >>"$script"
 }
+
 
 Sync__sat_semver.py ./sat_semver.py
