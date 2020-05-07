@@ -2,7 +2,9 @@
 
 Use `bazel sync` to upgrade & lock your dependencies.
 
-Note: rules defined here download dependencies the same way `http_archive` does for best cache utilization.
+Notes
+* The rule defined here downloads dependencies the same way `http_archive` does for best cache utilization.
+* Dependencies hosted at https://github.com/bazelbuild also use https://mirror.bazel.build/
 
 ## Getting started
 
