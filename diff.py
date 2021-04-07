@@ -13,6 +13,7 @@ IGNORED = [
     "local_config_cc_toolchains",
     "local_config_sh",
     "local_config_xcode",
+    "local_jdk",
     "remote_coverage_tools",
     "remote_java_tools_darwin",
     "remote_java_tools_linux",
