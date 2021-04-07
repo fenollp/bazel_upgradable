@@ -56,6 +56,7 @@ if __name__ == '__main__':
 
             ty = {
                 'application/x-compressed': 'tar.gz',
+                'application/x-compressed-tar': 'tar.gz',
                 'application/x-zip-compressed': 'zip',
                 'application/zip': 'zip',
             }[asset['content_type']]

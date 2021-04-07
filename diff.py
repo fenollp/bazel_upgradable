@@ -13,6 +13,7 @@ IGNORED = [
     "local_config_cc_toolchains",
     "local_config_sh",
     "local_config_xcode",
+    "local_jdk",
     "remote_coverage_tools",
     "remote_java_tools_darwin",
     "remote_java_tools_linux",
@@ -23,8 +24,16 @@ IGNORED = [
     "remotejdk10_win",
     "remotejdk11_linux",
     "remotejdk11_linux_aarch64",
+    "remotejdk11_linux_ppc64le",
+    "remotejdk11_linux_s390x",
     "remotejdk11_macos",
     "remotejdk11_win",
+    "remotejdk14_linux",
+    "remotejdk14_macos",
+    "remotejdk14_win",
+    "remotejdk15_linux",
+    "remotejdk15_macos",
+    "remotejdk15_win",
     "remotejdk_linux",
     "remotejdk_linux_aarch64",
     "remotejdk_macos",
@@ -52,7 +61,15 @@ for x in after.resolved:
         continue
     a[name] = x
 
-for name in sorted(set(list(b.keys()) + list(a.keys()))):
+keys = sorted(set(list(b.keys()) + list(a.keys())))
+mismatched = [k for k in keys if k not in b or k not in a]
+if len(mismatched) != 0:
+    print("Unexpected keys:")
+    print(mismatched)
+    print("add these to IGNORED maybe?")
+    exit(1)
+
+for name in keys:
     xb = b[name]
     xa = a[name]
     d = {k: xa[k] for k in set(xa) - set(xb)}
