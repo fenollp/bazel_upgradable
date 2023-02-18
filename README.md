@@ -66,7 +66,7 @@ upgradable_repository(
     build_file = "@//third_party:glfw3_osx.BUILD",
     # {tag} and {tag_digits} are expanded during dependency resolution
     release = "glfw-{tag_digits}.bin.MACOS.zip",
-    remote = "git://github.com/glfw/glfw.git",
+    remote = "https://github.com/glfw/glfw.git",
     tag = "~3",
 )
 ```
