@@ -37,7 +37,7 @@ load("@bazel_upgradable//:rule.bzl", "upgradable_repository")
 ```python
 upgradable_repository(
     name = "bazel_skylib",
-    remote = "git://github.com/bazelbuild/bazel-skylib.git",
+    remote = "https://github.com/bazelbuild/bazel-skylib.git",
 )
 ```
 
@@ -46,7 +46,7 @@ upgradable_repository(
 # Locking on major of a GitHub tag
 upgradable_repository(
     name = "bazel_skylib",
-    remote = "git://github.com/bazelbuild/bazel-skylib.git",
+    remote = "https://github.com/bazelbuild/bazel-skylib.git",
     tag = "~1",
 )
 
