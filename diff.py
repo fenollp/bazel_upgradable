@@ -8,6 +8,7 @@ import before
 import after
 
 IGNORED = [
+    "android_gmaven_r8",
     "android_tools",
     "local_config_cc",
     "local_config_cc_toolchains",
@@ -59,6 +60,8 @@ IGNORED = [
     "remotejdk16_win",
     "remotejdk16_win_toolchain_config_repo",
     "remotejdk17_linux",
+    "remotejdk17_linux_aarch64",
+    "remotejdk17_linux_aarch64_toolchain_config_repo",
     "remotejdk17_linux_toolchain_config_repo",
     "remotejdk17_macos",
     "remotejdk17_macos_aarch64",
@@ -68,12 +71,25 @@ IGNORED = [
     "remotejdk17_win_arm64",
     "remotejdk17_win_arm64_toolchain_config_repo",
     "remotejdk17_win_toolchain_config_repo",
+    "remotejdk18_linux",
+    "remotejdk18_linux_aarch64",
+    "remotejdk18_linux_aarch64_toolchain_config_repo",
+    "remotejdk18_linux_toolchain_config_repo",
+    "remotejdk18_macos",
+    "remotejdk18_macos_aarch64",
+    "remotejdk18_macos_aarch64_toolchain_config_repo",
+    "remotejdk18_macos_toolchain_config_repo",
+    "remotejdk18_win",
+    "remotejdk18_win_arm64",
+    "remotejdk18_win_arm64_toolchain_config_repo",
+    "remotejdk18_win_toolchain_config_repo",
     "remotejdk_linux",
     "remotejdk_linux_aarch64",
     "remotejdk_macos",
     "remotejdk_win",
     "rules_cc",
     "rules_java",
+    "rules_license",
     "rules_proto",
 ]
 
@@ -108,11 +124,12 @@ for name in keys:
     xa = a[name]
     d = {k: xa[k] for k in set(xa) - set(xb)}
     if d:
+        dump = lambda x: print(json.dumps(x, indent=4, sort_keys=True))
         print(name)
         print("Before:")
-        print(json.dumps(xb, indent=4, sort_keys=True))
+        dump(xb)
         print("Before:")
-        print(json.dumps(xa, indent=4, sort_keys=True))
+        dump(xa)
         print("Difference:")
-        print(json.dumps(d, indent=4, sort_keys=True))
-        exit(len(2))
+        dump(d)
+        exit(2)
