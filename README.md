@@ -23,8 +23,8 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "bazel_upgradable",
-    strip_prefix = "bazel_upgradable-0.2.1",
-    url = "https://github.com/fenollp/bazel_upgradable/archive/0.2.1.zip",
+    strip_prefix = "bazel_upgradable-0.3.0",
+    url = "https://github.com/fenollp/bazel_upgradable/archive/0.3.0.zip",
 )
 
 load("@bazel_upgradable//:rule.bzl", "upgradable_repository")
@@ -37,7 +37,7 @@ load("@bazel_upgradable//:rule.bzl", "upgradable_repository")
 ```python
 upgradable_repository(
     name = "bazel_skylib",
-    remote = "git://github.com/bazelbuild/bazel-skylib.git",
+    remote = "https://github.com/bazelbuild/bazel-skylib.git",
 )
 ```
 
@@ -46,7 +46,7 @@ upgradable_repository(
 # Locking on major of a GitHub tag
 upgradable_repository(
     name = "bazel_skylib",
-    remote = "git://github.com/bazelbuild/bazel-skylib.git",
+    remote = "https://github.com/bazelbuild/bazel-skylib.git",
     tag = "~1",
 )
 
@@ -66,7 +66,7 @@ upgradable_repository(
     build_file = "@//third_party:glfw3_osx.BUILD",
     # {tag} and {tag_digits} are expanded during dependency resolution
     release = "glfw-{tag_digits}.bin.MACOS.zip",
-    remote = "git://github.com/glfw/glfw.git",
+    remote = "https://github.com/glfw/glfw.git",
     tag = "~3",
 )
 ```

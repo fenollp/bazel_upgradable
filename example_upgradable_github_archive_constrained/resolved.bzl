@@ -99,7 +99,7 @@ resolved = [
         "original_rule_class": "@bazel_upgradable//:rule.bzl%upgradable_repository",
         "original_attributes": {
             "name": "bazel_skylib",
-            "remote": "git://github.com/bazelbuild/bazel-skylib.git",
+            "remote": "https://github.com/bazelbuild/bazel-skylib.git",
             "tag": "~1"
         },
         "repositories": [
@@ -120,7 +120,7 @@ resolved = [
                     "workspace_file_content": "",
                     "branch": "",
                     "release": "",
-                    "remote": "git://github.com/bazelbuild/bazel-skylib.git",
+                    "remote": "https://github.com/bazelbuild/bazel-skylib.git",
                     "sha256": "839ee2a0ee5b728b7af73eac87b5e207ed2c8651b7bcf7c6142cdf4dd1ea738b",
                     "strip_prefix": "bazel-skylib-e59b620b392a8ebbcf25879fc3fde52b4dc77535",
                     "tag": "~1",

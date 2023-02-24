@@ -58,7 +58,7 @@ for workspace in example_*; do
 	cp $L after.py
 
 	set +e
-	python ../diff.py "$PWD"
+	python3 ../diff.py "$PWD"
 	diffed=$?
 	set -e
 	rm before.py after.py

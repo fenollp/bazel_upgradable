@@ -8,6 +8,7 @@ import before
 import after
 
 IGNORED = [
+    "android_gmaven_r8",
     "android_tools",
     "local_config_cc",
     "local_config_cc_toolchains",
@@ -15,6 +16,7 @@ IGNORED = [
     "local_config_xcode",
     "local_jdk",
     "remote_coverage_tools",
+    "remote_java_tools",
     "remote_java_tools_darwin",
     "remote_java_tools_linux",
     "remote_java_tools_windows",
@@ -24,24 +26,70 @@ IGNORED = [
     "remotejdk10_win",
     "remotejdk11_linux",
     "remotejdk11_linux_aarch64",
+    "remotejdk11_linux_aarch64_toolchain_config_repo",
     "remotejdk11_linux_ppc64le",
+    "remotejdk11_linux_ppc64le_toolchain_config_repo",
     "remotejdk11_linux_s390x",
+    "remotejdk11_linux_s390x_toolchain_config_repo",
+    "remotejdk11_linux_toolchain_config_repo",
     "remotejdk11_macos",
     "remotejdk11_macos_aarch64",
+    "remotejdk11_macos_aarch64_toolchain_config_repo",
+    "remotejdk11_macos_toolchain_config_repo",
     "remotejdk11_win",
+    "remotejdk11_win_arm64",
+    "remotejdk11_win_arm64_toolchain_config_repo",
+    "remotejdk11_win_toolchain_config_repo",
     "remotejdk14_linux",
     "remotejdk14_macos",
     "remotejdk14_win",
     "remotejdk15_linux",
+    "remotejdk15_linux_toolchain_config_repo",
     "remotejdk15_macos",
     "remotejdk15_macos_aarch64",
+    "remotejdk15_macos_aarch64_toolchain_config_repo",
+    "remotejdk15_macos_toolchain_config_repo",
     "remotejdk15_win",
+    "remotejdk15_win_toolchain_config_repo",
+    "remotejdk16_linux",
+    "remotejdk16_linux_toolchain_config_repo",
+    "remotejdk16_macos",
+    "remotejdk16_macos_aarch64",
+    "remotejdk16_macos_aarch64_toolchain_config_repo",
+    "remotejdk16_macos_toolchain_config_repo",
+    "remotejdk16_win",
+    "remotejdk16_win_toolchain_config_repo",
+    "remotejdk17_linux",
+    "remotejdk17_linux_aarch64",
+    "remotejdk17_linux_aarch64_toolchain_config_repo",
+    "remotejdk17_linux_toolchain_config_repo",
+    "remotejdk17_macos",
+    "remotejdk17_macos_aarch64",
+    "remotejdk17_macos_aarch64_toolchain_config_repo",
+    "remotejdk17_macos_toolchain_config_repo",
+    "remotejdk17_win",
+    "remotejdk17_win_arm64",
+    "remotejdk17_win_arm64_toolchain_config_repo",
+    "remotejdk17_win_toolchain_config_repo",
+    "remotejdk18_linux",
+    "remotejdk18_linux_aarch64",
+    "remotejdk18_linux_aarch64_toolchain_config_repo",
+    "remotejdk18_linux_toolchain_config_repo",
+    "remotejdk18_macos",
+    "remotejdk18_macos_aarch64",
+    "remotejdk18_macos_aarch64_toolchain_config_repo",
+    "remotejdk18_macos_toolchain_config_repo",
+    "remotejdk18_win",
+    "remotejdk18_win_arm64",
+    "remotejdk18_win_arm64_toolchain_config_repo",
+    "remotejdk18_win_toolchain_config_repo",
     "remotejdk_linux",
     "remotejdk_linux_aarch64",
     "remotejdk_macos",
     "remotejdk_win",
     "rules_cc",
     "rules_java",
+    "rules_license",
     "rules_proto",
 ]
 
@@ -76,11 +124,12 @@ for name in keys:
     xa = a[name]
     d = {k: xa[k] for k in set(xa) - set(xb)}
     if d:
+        dump = lambda x: print(json.dumps(x, indent=4, sort_keys=True))
         print(name)
         print("Before:")
-        print(json.dumps(xb, indent=4, sort_keys=True))
+        dump(xb)
         print("Before:")
-        print(json.dumps(xa, indent=4, sort_keys=True))
+        dump(xa)
         print("Difference:")
-        print(json.dumps(d, indent=4, sort_keys=True))
-        exit(len(2))
+        dump(d)
+        exit(2)
